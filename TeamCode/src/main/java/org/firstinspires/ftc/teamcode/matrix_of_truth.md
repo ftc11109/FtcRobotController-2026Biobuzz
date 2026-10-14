@@ -24,9 +24,9 @@ Passkey: 'TeamTekerz'
 ## Expansion Hub:
 
 # Motors:
-0: [none]
-1: [none]
-2: [none]
+0: "shooter_motor"
+1: "intake_motor"
+2: "slide_motor"
 3: [none]
 
 # Servos:
