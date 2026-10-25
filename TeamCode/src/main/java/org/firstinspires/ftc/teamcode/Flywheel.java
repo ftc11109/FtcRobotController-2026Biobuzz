@@ -16,4 +16,7 @@ public class Flywheel {
     public void tick() {
         //#TODO: ADD TICK METHOD
     }
+    public void setSpeed(int speed) {
+        flywheelMotor.setVelocity(speed);
+    }
 }

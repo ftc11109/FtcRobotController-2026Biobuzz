@@ -57,8 +57,7 @@ public class ConceptNullOp extends OpMode {
    * OpMode is stopped).
    */
   @Override
-  public void init_loop() {
-  }
+  public void init_loop() {}
 
   /**
    * This method will be called once, when the START button is pressed.
