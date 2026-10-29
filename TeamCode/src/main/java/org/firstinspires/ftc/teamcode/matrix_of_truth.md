@@ -42,7 +42,7 @@ Name: 'Camera'
 ### CONTAINMENT:
 
 DANGER --- DO NOT RELEASE
-
+```
    +--------------+
   /|             /|
  / |            / |
@@ -52,3 +52,4 @@ DANGER --- DO NOT RELEASE
 | /            | /
 |/             |/
 *--------------*
+```
