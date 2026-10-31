@@ -120,6 +120,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     static final double     WHEEL_DIAMETER_INCHES   = 3.75 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
                                                       (WHEEL_DIAMETER_INCHES * 3.1415);
+    public int PATH = 0; //0: start on audience/ref side wall. 1: start on alliance side wall
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
@@ -157,7 +158,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
          * To Do:  EDIT these two lines to match YOUR mounting configuration.
          */
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -179,8 +180,15 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
         // Wait for the game to start (Display Gyro value while waiting)
         while (opModeInInit()) {
-            telemetry.addData(">", "Robot Heading = %4.0f", getHeading());
-            telemetry.update();
+            telemetry.addLine("Starting Selection");
+            telemetry.addLine("A: Ref/Audience side wall");
+            telemetry.addLine("B: Alliance side wall");
+            if(gamepad1.a) {
+                PATH = 0;
+            }
+            if(gamepad1.b) {
+                PATH = 1;
+            }
         }
 
         // Set the encoders for closed loop speed control, and reset the heading.
@@ -196,8 +204,13 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 6.0, 0.0);    // Drive Forward 24"
-        turnToHeading(TURN_SPEED, 90);
+        if(PATH == 0) {
+            encoderDrive(driveSpeed, 18, 18, 18, 18, "Driving forward...");
+        }
+        else if(PATH == 1) {
+            encoderDrive(driveSpeed, 5, 5, 5, 5, "Driving off wall...");
+            encoderDrive(driveSpeed, -5, 5, 5, -5, "Strafing");
+        }
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -213,6 +226,65 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     // **********  HIGH Level driving functions.  ********************
 
+    public void encoderDrive(double speed,
+                             double frontLeftInches, double frontRightInches, double backLeftInches, double backRightInches,
+                             String message) {
+        int newFrontLeftTarget;
+        int newFrontRightTarget;
+        int newBackLeftTarget;
+        int newBackRightTarget;
+        // Ensure that the OpMode is still active
+        if (opModeIsActive()) {
+            // Determine new target position, and pass to motor controller
+            newFrontLeftTarget = frontLeftDrive.getCurrentPosition() + (int)(frontLeftInches * COUNTS_PER_INCH);
+            newFrontRightTarget = frontRightDrive.getCurrentPosition() + (int)(frontRightInches * COUNTS_PER_INCH);
+            newBackLeftTarget = backLeftDrive.getCurrentPosition() + (int)(backLeftInches * COUNTS_PER_INCH);
+            newBackRightTarget = backRightDrive.getCurrentPosition() + (int)(backRightInches * COUNTS_PER_INCH);
+            frontLeftDrive.setTargetPosition(newFrontLeftTarget);
+            frontRightDrive.setTargetPosition(newFrontRightTarget);
+            backLeftDrive.setTargetPosition(newBackLeftTarget);
+            backRightDrive.setTargetPosition(newBackRightTarget);
+            // Turn On RUN_TO_POSITION
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            frontLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            frontRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backLeftDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            backRightDrive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            // reset the timeout time and start motion.
+            frontLeftDrive.setPower(Math.abs(speed));
+            frontRightDrive.setPower(Math.abs(speed));
+            backRightDrive.setPower(Math.abs(speed));
+            backLeftDrive.setPower(Math.abs(speed));
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            // Note: We use (isBusy() && isBusy()) in the loop test, which means that when EITHER motor hits
+            // its target position, the motion will stop.  This is "safer" in the event that the robot will
+            // always end the motion as soon as possible.
+            // However, if you require that BOTH motors have finished their moves before the robot continues
+            // onto the next step, use (isBusy() || isBusy()) in the loop test.
+            while (opModeIsActive() &&
+                    (frontLeftDrive.isBusy() || frontRightDrive.isBusy() || backLeftDrive.isBusy() || backRightDrive.isBusy())) {
+                // Display it for the driver.
+                telemetry.addLine(message);
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            frontLeftDrive.setPower(0);
+            frontRightDrive.setPower(0);
+            backLeftDrive.setPower(0);
+            backRightDrive.setPower(0);
+            // Turn off RUN_TO_POSITION
+            frontLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            frontRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backLeftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            backRightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            sleep(250);   // optional pause after each move.
+        }
+    }
     /**
     *  Drive in a straight line, on a fixed compass heading (angle), based on encoder counts.
     *  Move will stop if either of these conditions occur:
@@ -220,20 +292,21 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     *  2) Driver stops the OpMode running.
     *
     * @param maxDriveSpeed MAX Speed for forward/rev motion (range 0 to +1.0) .
-    * @param distance   Distance (in inches) to move from current position.  Negative distance means move backward.
+    * @param forward   Distance (in inches) to move from current position.  Negative distance means move backward.
     * @param heading      Absolute Heading Angle (in Degrees) relative to last gyro reset.
     *                   0 = fwd. +ve is CCW from fwd. -ve is CW from forward.
     *                   If a relative angle is required, add/subtract from the current robotHeading.
     */
     public void driveStraight(double maxDriveSpeed,
-                              double distance,
+                              double forward,
+                              double right,
                               double heading) {
 
         // Ensure that the OpMode is still active
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            int moveCounts = (int)(distance * COUNTS_PER_INCH);
+            int moveCounts = (int)(forward * COUNTS_PER_INCH);
             frontLeftTarget = frontLeftDrive.getCurrentPosition() + moveCounts;
             frontRightTarget = frontRightDrive.getCurrentPosition() + moveCounts;
             backLeftTarget = backLeftDrive.getCurrentPosition() + moveCounts;
@@ -263,7 +336,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
 
                 // if driving in reverse, the motor correction also needs to be reversed
-                if (distance < 0)
+                if (forward < 0)
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.

@@ -6,18 +6,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Intake {
     DcMotor intakeMotor;
-    Gamepad gamepad;
+    Gamepad driver;
     public Intake(HardwareMap hardwareMap, Gamepad gamepad) {
         intakeMotor = hardwareMap.get(DcMotor.class, "intake_motor");
-        this.gamepad = gamepad;
-        //intakeMotor.setDirection(DcMotor.Direction.REVERSE);
+        driver = gamepad;
     }
     public void tick() {
-        //#TODO: ADD TICK METHOD
-        if(this.gamepad.right_bumper) {
+        if(driver.right_bumper) {
             intakeMotor.setPower(-1);
         }
-        else if(this.gamepad.right_trigger_pressed) {
+        else if(driver.right_trigger_pressed) {
             intakeMotor.setPower(1);
         }
         else {

@@ -59,6 +59,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
     DcMotor backLeftDrive;
     DcMotor backRightDrive;
     Intake intake;
+    Transfer transfer;
     // This declares the IMU needed to get the current direction the robot is facing
     IMU imu;
 
@@ -70,6 +71,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
         intake = new Intake(hardwareMap, gamepad1);
+        transfer = new Transfer(hardwareMap, gamepad1, gamepad2);
 
         // We set the left motors in reverse which is needed for drive trains where the left
         // motors are opposite to the right ones.
@@ -89,7 +91,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
                 RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
 
         RevHubOrientationOnRobot orientationOnRobot = new
                 RevHubOrientationOnRobot(logoDirection, usbDirection);
@@ -111,6 +113,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         // If you press the left bumper, you get a drive from the point of view of the robot
         // (much like driving an RC vehicle)
         intake.tick();
+        transfer.tick();
 
         if (gamepad1.left_bumper) {
             drive(-gamepad1.left_stick_y, gamepad1.left_stick_x, gamepad1.right_stick_x);
