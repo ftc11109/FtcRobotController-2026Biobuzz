@@ -205,11 +205,11 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
         if(PATH == 0) {
-            encoderDrive(driveSpeed, 18, 18, 18, 18, "Driving forward...");
+            encoderDrive(DRIVE_SPEED, 18, 18, 18, 18, "Driving forward...");
         }
         else if(PATH == 1) {
-            encoderDrive(driveSpeed, 5, 5, 5, 5, "Driving off wall...");
-            encoderDrive(driveSpeed, -5, 5, 5, -5, "Strafing");
+            encoderDrive(DRIVE_SPEED, 5, 5, 5, 5, "Driving off wall...");
+            encoderDrive(DRIVE_SPEED, -5, 5, 5, -5, "Strafing");
         }
 
         telemetry.addData("Path", "Complete");
