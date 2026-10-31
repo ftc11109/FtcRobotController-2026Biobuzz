@@ -26,9 +26,9 @@ Name: 'Camera'
 ## Expansion Hub:
 
 # Motors:
-0: "shooter_motor"
-1: "intake_motor"
-2: "slide_motor"
+0: "intake_motor"
+1: [none]
+2: [none]
 3: [none]
 
 # Servos:

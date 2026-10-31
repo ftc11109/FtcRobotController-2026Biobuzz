@@ -31,7 +31,6 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
@@ -69,7 +68,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  *  Note: It would be possible to reset the heading after each move, but this would accumulate steering errors.
  *
  *  The angle of movement/rotation is assumed to be a standardized rotation around the robot Z axis,
- *  which means that a Positive rotation is Counter Clockwise, looking down on the field.
+ *  which means that a Positive rotation is Counterclockwise, looking down on the field.
  *  This is consistent with the FTC field coordinate conventions set out in the document:
  *  https://ftc-docs.firstinspires.org/field-coordinate-system
  *
@@ -89,7 +88,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
  */
 
 @Autonomous(name="Robot: Auto Drive By Gyro", group="Robot")
-@Disabled
 public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -106,8 +104,6 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     private double  targetHeading = 0;
     private double  driveSpeed    = 0;
     private double  turnSpeed     = 0;
-    private double  leftSpeed     = 0;
-    private double  rightSpeed    = 0;
     private int     frontLeftTarget    = 0;
     private int     frontRightTarget   = 0;
     private int     backLeftTarget    = 0;
@@ -119,7 +115,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
     // For example, use a value of 2.0 for a 12-tooth spur gear driving a 24-tooth spur gear.
     // This is gearing DOWN for less speed and more torque.
     // For gearing UP, use a gear ratio less than 1.0. Note this will affect the direction of wheel rotation.
-    static final double     COUNTS_PER_MOTOR_REV    = 288 ;   // eg: GoBILDA 312 RPM Yellow Jacket
+    static final double     COUNTS_PER_MOTOR_REV    = 288 ;
     static final double     DRIVE_GEAR_REDUCTION    = 12 ;     // No External Gearing.
     static final double     WHEEL_DIAMETER_INCHES   = 3.75 ;     // For figuring circumference
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
@@ -200,19 +196,8 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          holdHeading() is used after turns to let the heading stabilize
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
-        driveStraight(DRIVE_SPEED, 24.0, 0.0);    // Drive Forward 24"
-        turnToHeading( TURN_SPEED, -45.0);               // Turn  CW to -45 Degrees
-        holdHeading( TURN_SPEED, -45.0, 0.5);   // Hold -45 Deg heading for a 1/2 second
-
-        driveStraight(DRIVE_SPEED, 17.0, -45.0);  // Drive Forward 17" at -45 degrees (12"x and 12"y)
-        turnToHeading( TURN_SPEED,  45.0);               // Turn  CCW  to  45 Degrees
-        holdHeading( TURN_SPEED,  45.0, 0.5);    // Hold  45 Deg heading for a 1/2 second
-
-        driveStraight(DRIVE_SPEED, 17.0, 45.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
-        turnToHeading( TURN_SPEED,   0.0);               // Turn  CW  to 0 Degrees
-        holdHeading( TURN_SPEED,   0.0, 1.0);    // Hold  0 Deg heading for 1 second
-
-        driveStraight(DRIVE_SPEED,-48.0, 0.0);    // Drive in Reverse 48" (should return to approx. staring position)
+        driveStraight(DRIVE_SPEED, 6.0, 0.0);    // Drive Forward 24"
+        turnToHeading(TURN_SPEED, 90);
 
         telemetry.addData("Path", "Complete");
         telemetry.update();
@@ -414,7 +399,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         double maxSpeed = 1.0;  // make this slower for outreaches
 
         // This is needed to make sure we don't pass > 1.0 to any wheel
-        // It allows us to keep all of the motors in proportion to what they should
+        // It allows us to keep all the motors in proportion to what they should
         // be and not get clipped
         maxPower = Math.max(maxPower, Math.abs(frontLeftPower));
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));

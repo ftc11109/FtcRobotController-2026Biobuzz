@@ -15,10 +15,10 @@ public class Intake {
     public void tick() {
         //#TODO: ADD TICK METHOD
         if(this.gamepad.right_bumper) {
-            intakeMotor.setPower(1);
+            intakeMotor.setPower(-1);
         }
         else if(this.gamepad.right_trigger_pressed) {
-            intakeMotor.setPower(-1);
+            intakeMotor.setPower(1);
         }
         else {
             intakeMotor.setPower(0);
