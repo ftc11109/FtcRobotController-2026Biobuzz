@@ -70,7 +70,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive");
         backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive");
 
-        intake = new Intake(hardwareMap, gamepad1);
+        intake = new Intake(hardwareMap, gamepad1, gamepad2);
         transfer = new Transfer(hardwareMap, gamepad1, gamepad2);
 
         // We set the left motors in reverse which is needed for drive trains where the left
@@ -104,6 +104,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         telemetry.addLine("Hold left bumper to drive in robot relative");
         telemetry.addLine("The left joystick sets the robot direction");
         telemetry.addLine("Moving the right joystick left and right turns the robot");
+        telemetry.addData("Slide height", transfer.slideMotor.getCurrentPosition());
 
         // If you press the START button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
