@@ -183,11 +183,15 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
             telemetry.addLine("Starting Selection");
             telemetry.addLine("A: Ref/Audience side wall");
             telemetry.addLine("B: Alliance side wall");
+            telemetry.addLine("Selected path: " + (PATH == 0 ? "A" : "B"));
+            telemetry.update();
             if(gamepad1.a) {
                 PATH = 0;
+                blackboard.put("IMU_HEADING_END", Math.PI / 2);
             }
             if(gamepad1.b) {
                 PATH = 1;
+                blackboard.put("IMU_HEADING_END", Math.PI / 2);
             }
         }
 
@@ -205,7 +209,7 @@ public class RobotAutoDriveByGyro_Linear extends LinearOpMode {
         //          Add a sleep(2000) after any step to keep the telemetry data visible for review
 
         if(PATH == 0) {
-            encoderDrive(DRIVE_SPEED, 18, 18, 18, 18, "Driving forward...");
+            encoderDrive(DRIVE_SPEED, 10, 10, 10, 10, "Driving forward...");
         }
         else if(PATH == 1) {
             encoderDrive(DRIVE_SPEED, -5, 5, 5, -5, "Strafing");
