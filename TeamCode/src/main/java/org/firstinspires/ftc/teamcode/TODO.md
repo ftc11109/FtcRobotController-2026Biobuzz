@@ -1,3 +1,4 @@
+0. Make code more readable and auto-calculate values
 1. Trough NEEDS TESTING
     1. Lift motor 
    2. Tilt motor

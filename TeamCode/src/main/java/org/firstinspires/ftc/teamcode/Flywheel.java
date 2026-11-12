@@ -9,7 +9,6 @@ public class Flywheel {
     DcMotorEx flywheelMotor;
     Gamepad driver;
 
-    //#TODO: REQUIRE CAMERA PASSED IN FOR TARGETING
     public Flywheel(HardwareMap hardwareMap, Gamepad gamepad1) {
         flywheelMotor = hardwareMap.get(DcMotorEx.class, "flywheel_motor");
         //flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
