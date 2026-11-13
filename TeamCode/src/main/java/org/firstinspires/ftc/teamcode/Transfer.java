@@ -23,14 +23,14 @@ public class Transfer {
     static final int ticksPerLiftInch = (int) ticksPerStringInch / 2;
     //heights (inches) #TODO MAKE THESE VALUES WORK
     static final int shootHeight = 10;
-    static final int flowerHeight = 17;
+    static final int flowerHeight = 20;
 
 
     public Transfer(HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
-        slideMotor = hardwareMap.get(DcMotor.class, "slide_motor");
+        slideMotor = hardwareMap.get(DcMotor.class, "lift_motor");
         slideMotor.setTargetPosition(0);
         slideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        slideMotor.setPower(0.0);
+        slideMotor.setPower(1.0);
         pollenServo = hardwareMap.get(Servo.class, "pollen_servo");
         nectarServo = hardwareMap.get(Servo.class, "nectar_servo");
         flowerServo = hardwareMap.get(Servo.class, "flower_servo");
@@ -41,43 +41,43 @@ public class Transfer {
     public int coreHexDegToTicks(float deg) {
         return (int) (deg * ticksPerDegree);
     }
-    public int inchesToSlideTicks(float inches) {
-        return (int) inches * ticksPerLiftInch;
+    public int liftInchesToSlideTicks(float inches) {
+        return (int) ((inches / 2) / pulleyCircumference) * 288;
     }
     public void tick() {
         //Slide controls
         if(copilot.x) {
-            slideMotor.setTargetPosition(inchesToSlideTicks(0));
-            pollenServo.setPosition(0);
-            nectarServo.setPosition(0);
-            flowerServo.setPosition(0);
-            tiltMotor.setTargetPosition(coreHexDegToTicks(10));
+            slideMotor.setTargetPosition(liftInchesToSlideTicks(0));
+            pollenServo.setPosition(0.5);
+            nectarServo.setPosition(0.5);
+            flowerServo.setPosition(0.5);
+            tiltMotor.setTargetPosition(coreHexDegToTicks(0));
 
         }
         if(copilot.a) {
-            slideMotor.setTargetPosition(inchesToSlideTicks(shootHeight));
+            slideMotor.setTargetPosition(liftInchesToSlideTicks(shootHeight));
             tiltMotor.setTargetPosition(coreHexDegToTicks(-10));
         }
         if(copilot.b) {
-            slideMotor.setTargetPosition(inchesToSlideTicks(flowerHeight));
+            slideMotor.setTargetPosition(liftInchesToSlideTicks(flowerHeight));
             tiltMotor.setTargetPosition(coreHexDegToTicks(10));
         }
         //flower gate controls
-        if(slideMotor.getCurrentPosition() > inchesToSlideTicks(flowerHeight) - inchesToSlideTicks(0.25F) && slideMotor.getTargetPosition() == inchesToSlideTicks(flowerHeight)){
+        if(slideMotor.getCurrentPosition() > liftInchesToSlideTicks(flowerHeight) - liftInchesToSlideTicks(0.25F) && slideMotor.getTargetPosition() == liftInchesToSlideTicks(flowerHeight)){
             if(driver.left_bumper) {
-                flowerServo.setPosition(10);
+                flowerServo.setPosition(1.0);
             }
             if(driver.left_trigger_pressed) {
-                flowerServo.setPosition(10);
+                flowerServo.setPosition(0.0);
             }
         }
         //shooting gate controls
-        if(slideMotor.getCurrentPosition() > inchesToSlideTicks(shootHeight) - inchesToSlideTicks(0.25F) && slideMotor.getTargetPosition() == inchesToSlideTicks(shootHeight)) {
+        if(slideMotor.getCurrentPosition() > liftInchesToSlideTicks(shootHeight) - liftInchesToSlideTicks(0.25F) && slideMotor.getTargetPosition() == liftInchesToSlideTicks(shootHeight)) {
             if(driver.left_bumper) {
-                pollenServo.setPosition(10);
+                pollenServo.setPosition(1.0);
             }
             if(driver.left_trigger_pressed) {
-                nectarServo.setPosition(10);
+                nectarServo.setPosition(0.0);
             }
         }
     }

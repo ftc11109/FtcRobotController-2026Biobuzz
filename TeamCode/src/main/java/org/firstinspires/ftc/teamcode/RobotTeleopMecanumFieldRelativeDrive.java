@@ -106,6 +106,8 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         telemetry.addLine("The left joystick sets the robot direction");
         telemetry.addLine("Moving the right joystick left and right turns the robot");
         telemetry.addData("Slide height", transfer.slideMotor.getCurrentPosition());
+        telemetry.addData("Pulley calculated circumference", Transfer.pulleyCircumference);
+        telemetry.addData("Slide target", transfer.slideMotor.getCurrentPosition());
 
         // If you press the START button, then you reset the Yaw to be zero from the way
         // the robot is currently pointing
@@ -131,7 +133,7 @@ public class RobotTeleopMecanumFieldRelativeDrive extends OpMode {
         double theta = Math.atan2(forward, right);
         double r = Math.hypot(right, forward);
         double imuHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-        double adjustedHeading = imuHeading + (int) blackboard.get("IMU_HEADING_END");
+        double adjustedHeading = imuHeading; // + (int) blackboard.get("IMU_HEADING_END");
         // Second, rotate angle by the angle the robot is pointing
         theta = AngleUnit.normalizeRadians(theta -
                 adjustedHeading);
